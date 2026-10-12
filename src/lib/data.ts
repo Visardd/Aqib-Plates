@@ -5,7 +5,7 @@ import { isSanityConfigured } from "@/sanity/env";
 import seed from "@/data/seed-plates.json";
 import { isForSale, slugify, type Plate } from "./plates";
 
-const PLATES_QUERY = defineQuery(`*[_type == "plate" && defined(slug.current)] | order(featured desc, price desc) {
+const PLATES_QUERY = defineQuery(`*[_type == "plate" && defined(slug.current) && defined(registration)] | order(featured desc, price desc) {
   registration,
   "slug": slug.current,
   price,

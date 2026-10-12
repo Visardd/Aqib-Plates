@@ -16,7 +16,10 @@ import { plateImageUrl, plateProductSchema } from "@/lib/structured-data";
 import { absoluteUrl, site } from "@/lib/site";
 
 export async function generateStaticParams() {
-  return (await getPlates()).map((p) => ({ slug: p.slug }));
+  const plates = await getPlates();
+  // Cache Components needs at least one param to build, even with no plates in Sanity yet.
+  // An unknown slug renders the 404 page.
+  return plates.length ? plates.map((p) => ({ slug: p.slug })) : [{ slug: "none" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/plates/[slug]">): Promise<Metadata> {
