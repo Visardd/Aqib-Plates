@@ -28,7 +28,7 @@ Copy `.env.example` to `.env.local` and fill in what you have. Everything is opt
 1. Create a free project at [sanity.io/manage](https://www.sanity.io/manage) and put its ID in `NEXT_PUBLIC_SANITY_PROJECT_ID`.
 2. In the project's API settings, add `http://localhost:3000` and the live domain as CORS origins (with credentials).
 3. Create an Editor token and import the current plates once: `SANITY_API_WRITE_TOKEN=... node scripts/seed-sanity.mjs`
-4. Open `/studio` on the site to add plates, change prices and mark plates sold.
+4. Open `/studio` on the site to add plates, change prices and mark plates sold. Plates are cached, so when running `npm run dev` hard refresh (Ctrl+Shift+R) to see an edit.
 5. Add a webhook (filter `_type == "plate"`) pointing at `https://<domain>/api/revalidate` with the secret from `SANITY_REVALIDATE_SECRET`, so changes go live within seconds.
 
 ## Payments (Stripe)
