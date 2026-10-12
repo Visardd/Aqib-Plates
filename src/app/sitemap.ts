@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { nav, absoluteUrl } from "@/lib/site";
-import { plates } from "@/lib/plates";
+import { getPlates } from "@/lib/data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const plates = await getPlates();
+
   const pages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "daily", priority: 1 },
     ...nav.map((item) => ({
@@ -12,14 +14,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  // Only plates with their own page; sold ones stay listed so their links keep ranking.
-  const platePages: MetadataRoute.Sitemap = plates
-    .filter((p) => p.price !== undefined)
-    .map((p) => ({
-      url: absoluteUrl(`/plates/${p.slug}`),
-      changeFrequency: "weekly",
-      priority: p.status === "available" ? 0.8 : 0.3,
-    }));
+  // Sold plates stay listed so their pages keep ranking and pass visitors on to similar plates.
+  const platePages: MetadataRoute.Sitemap = plates.map((p) => ({
+    url: absoluteUrl(`/plates/${p.slug}`),
+    lastModified: p.updatedAt,
+    changeFrequency: "weekly",
+    priority: p.status === "available" ? 0.8 : 0.3,
+  }));
 
   return [...pages, ...platePages];
 }
