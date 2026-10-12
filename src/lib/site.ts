@@ -15,7 +15,7 @@ export const site = {
     countryName: "United Kingdom",
   },
   requestFee: 9.99,
-  certificateLeadTime: "up to 2 weeks",
+  certificateLeadTime: "within about 2 weeks",
 } as const;
 
 export const nav = [

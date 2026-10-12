@@ -44,7 +44,7 @@ export function PlateQuickView({ plate }: { plate: PlateData }) {
             </div>
             <div className="flex gap-3">
               <ButtonLink href={`/plates/${plate.slug}`} size="lg" className="flex-1">
-                {plate.status === "available" ? "View and buy" : "View plate"}
+                {plate.status === "sold" ? "View plate" : "View and buy"}
               </ButtonLink>
               <Button variant="secondary" size="lg" onClick={copy}>
                 Copy

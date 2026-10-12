@@ -55,7 +55,7 @@ export function plateProductSchema(plate: Plate): WithContext<Product> {
           price: plate.price.toFixed(2),
           priceCurrency: "GBP",
           availability:
-            plate.status === "available" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+            plate.status === "sold" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
           itemCondition: "https://schema.org/NewCondition",
           seller: { "@id": orgId } as Organization,
         };

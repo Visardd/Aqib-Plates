@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Button, ButtonLink } from "@/components/button";
+import { ButtonLink } from "@/components/button";
+import { BuyButton } from "@/components/buy-button";
 import { ShareButton } from "@/components/copy-button";
 import { JsonLd } from "@/components/json-ld";
 import { Plate } from "@/components/plate";
 import { PlateCard } from "@/components/plate-card";
 import { Reveal } from "@/components/reveal";
-import { startCheckout } from "@/app/actions/checkout";
 import { getPlate, getPlates } from "@/lib/data";
 import { formatPrice, similarPlates } from "@/lib/plates";
 import { plateImageUrl, plateProductSchema } from "@/lib/structured-data";
@@ -55,7 +55,6 @@ export default async function PlatePage({ params }: PageProps<"/plates/[slug]">)
   const sold = plate.status === "sold";
   const reserved = plate.status === "reserved";
   const similar = similarPlates(plate, all);
-  const buy = startCheckout.bind(null, plate.slug);
 
   return (
     <>
@@ -111,12 +110,10 @@ export default async function PlatePage({ params }: PageProps<"/plates/[slug]">)
               </div>
             </div>
           ) : (
-            <form action={buy} className="mt-8 flex gap-3">
-              <Button type="submit" size="lg" className="flex-1" disabled={reserved}>
-                {reserved ? "Reserved" : "Buy now"}
-              </Button>
+            <div className="mt-8 flex gap-3">
+              <BuyButton slug={plate.slug} reserved={reserved} />
               <ShareButton title={`${plate.registration} private number plate`} url={absoluteUrl(`/plates/${plate.slug}`)} />
-            </form>
+            </div>
           )}
 
           <ul className="mt-10 flex flex-col gap-3 border-t border-line pt-8">

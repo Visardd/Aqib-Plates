@@ -10,7 +10,7 @@ See [docs/site-spec.md](docs/site-spec.md) for the full spec and style guide.
 - Tailwind CSS 4 with design tokens in `src/app/globals.css`
 - Motion for animation, Sonner for toasts, Vaul for drawers
 - Sanity for the plate admin (embedded at `/studio`), Resend for form emails, Zod for validation
-- Coming next: Stripe checkout
+- Stripe Checkout for plate purchases and the £9.99 plate request fee
 
 ## Running locally
 
@@ -30,6 +30,19 @@ Copy `.env.example` to `.env.local` and fill in what you have. Everything is opt
 3. Create an Editor token and import the current plates once: `SANITY_API_WRITE_TOKEN=... node scripts/seed-sanity.mjs`
 4. Open `/studio` on the site to add plates, change prices and mark plates sold.
 5. Add a webhook (filter `_type == "plate"`) pointing at `https://<domain>/api/revalidate` with the secret from `SANITY_REVALIDATE_SECRET`, so changes go live within seconds.
+
+## Payments (Stripe)
+
+1. Create a Stripe account, then put the secret key in `STRIPE_SECRET_KEY` (use the test key first).
+2. Add a webhook endpoint at `https://<domain>/api/stripe/webhook` for `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `checkout.session.expired`, and put its signing secret in `STRIPE_WEBHOOK_SECRET`. Locally: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+3. Turn on Apple Pay and Google Pay under Payment methods. Checkout shows them automatically.
+
+How a sale works:
+- **Buy Now** reserves the plate in Sanity for 30 minutes (so two people can't pay for it at once) and opens Stripe Checkout. It collects the buyer's address and phone number, plus an optional name for the V750.
+- If the buyer goes back, the plate is released straight away. If they abandon checkout, Stripe expires the session and the webhook releases it.
+- On payment the webhook marks the plate sold, which moves it to the Sold page. It also emails Aqib the V750 details and sends the buyer a confirmation.
+- **Plate requests** take the £9.99 through Checkout first, then the webhook emails Aqib the request.
+- Without Stripe keys, Buy Now opens the contact form with the plate filled in, and plate requests are emailed without payment.
 
 ## SEO
 
