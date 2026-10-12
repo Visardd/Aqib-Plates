@@ -1,7 +1,10 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { notifyOwner } from "@/lib/email";
+import { stripe } from "@/lib/stripe";
+import { absoluteUrl, site } from "@/lib/site";
 
 export type FormState = {
   status: "idle" | "success" | "error";
@@ -31,7 +34,11 @@ const requestSchema = z.object({
   email,
   phone: phone.min(6, "Please enter a phone number"),
   budget: z.string().trim().min(1, "Please choose a budget").max(40),
-  idea: z.string().trim().min(2, "Tell us what you'd like on your plate").max(1000),
+  idea: z
+    .string()
+    .trim()
+    .min(2, "Tell us what you'd like on your plate")
+    .max(500, "Please keep it under 500 characters"),
 });
 
 function read(formData: FormData) {
@@ -72,14 +79,59 @@ export async function submitPlateRequest(_: FormState, formData: FormData): Prom
   const parsed = requestSchema.safeParse(read(formData));
   if (!parsed.success) return { status: "error", errors: z.flattenError(parsed.error).fieldErrors };
 
-  // Step 4 puts Stripe Checkout (£9.99) in front of this; the email then goes out on payment.
   const d = parsed.data;
+
+  // With Stripe on, take the £9.99 first; the Stripe webhook emails the request once paid.
+  if (stripe) {
+    let url: string;
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        customer_email: d.email,
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: "gbp",
+              unit_amount: Math.round(site.requestFee * 100),
+              product_data: {
+                name: "Private plate finding service",
+                description:
+                  "We search the DVLA database for a plate that matches your request. Full refund if we can't find one.",
+              },
+            },
+          },
+        ],
+        metadata: {
+          kind: "request",
+          firstName: d.firstName,
+          phone: d.phone,
+          budget: d.budget,
+          idea: d.idea.slice(0, 500),
+        },
+        success_url: absoluteUrl("/checkout/success?session_id={CHECKOUT_SESSION_ID}"),
+        cancel_url: absoluteUrl("/plate-request"),
+      });
+      url = session.url!;
+    } catch (err) {
+      console.error("Plate request checkout failed", err);
+      return { status: "error", message: `Payment isn't available right now. Please call ${site.phone} instead.` };
+    }
+    redirect(url);
+  }
+
   const sent = await notifyOwner({
     subject: `Plate request from ${d.firstName}`,
     replyTo: d.email,
-    text: [`Name: ${d.firstName}`, `Email: ${d.email}`, `Phone: ${d.phone}`, `Budget: ${d.budget}`, "", "Wants:", d.idea].join(
-      "\n",
-    ),
+    text: [
+      `Name: ${d.firstName}`,
+      `Email: ${d.email}`,
+      `Phone: ${d.phone}`,
+      `Budget: ${d.budget}`,
+      "",
+      "Wants:",
+      d.idea,
+    ].join("\n"),
   });
 
   return sent.ok

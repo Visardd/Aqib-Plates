@@ -45,6 +45,23 @@ export const plateType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "reservedUntil",
+      title: "Reserved until",
+      description: "Set automatically while a buyer is at checkout. The plate frees up if they don't pay.",
+      type: "datetime",
+      readOnly: true,
+      hidden: ({ document }) => document?.status !== "reserved",
+    }),
+    defineField({
+      name: "reservation",
+      type: "object",
+      hidden: true,
+      fields: [
+        { name: "token", type: "string" },
+        { name: "sessionId", type: "string" },
+      ],
+    }),
+    defineField({
       name: "soldAt",
       title: "Date sold",
       type: "date",

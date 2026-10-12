@@ -28,7 +28,8 @@ export function formatPrice(price: number) {
   return gbp.format(price);
 }
 
-export const isForSale = (p: Plate) => p.status === "available";
+// Reserved plates are mid-checkout and may come back, so they stay listed.
+export const isForSale = (p: Plate) => p.status !== "sold";
 
 // Numbers that stand in for letters on cherished plates, so "STOP" finds "DO I 5TOP".
 const lookalikes: Record<string, string> = {

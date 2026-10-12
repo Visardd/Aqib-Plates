@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: absoluteUrl(`/plates/${p.slug}`),
     lastModified: p.updatedAt,
     changeFrequency: "weekly",
-    priority: p.status === "available" ? 0.8 : 0.3,
+    priority: p.status === "sold" ? 0.3 : 0.8,
   }));
 
   return [...pages, ...platePages];
