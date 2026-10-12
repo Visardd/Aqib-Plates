@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { plateBand, plateText } from "@/lib/plate-font";
 
 type PlateProps = {
   registration: string;
@@ -12,8 +13,7 @@ type PlateProps = {
 // Real UK plates are 520 × 111 mm with 79 mm characters. Sizes below are in container
 // query units so the plate scales to whatever width it is given.
 export function Plate({ registration, variant = "rear", band = true, className, as: Tag = "span" }: PlateProps) {
-  const reg = registration.toUpperCase();
-  const fontSize = Math.min(19.5, 150 / Math.max(reg.length, 7));
+  const reg = plateText(registration, { width: 100, band });
 
   return (
     <div className={cn("@container w-full", className)}>
@@ -27,21 +27,27 @@ export function Plate({ registration, variant = "rear", band = true, className, 
         {band && (
           <span
             aria-hidden
-            className="flex w-[8.6cqw] shrink-0 flex-col items-center justify-end bg-plate-band pb-[2.2cqw] font-sans text-[3.6cqw] leading-none font-bold tracking-wide text-white"
+            className="flex shrink-0 flex-col items-center justify-end bg-plate-band pb-[2.2cqw] font-sans text-[3.6cqw] leading-none font-bold tracking-wide text-white"
+            style={{ width: `${plateBand * 100}cqw` }}
           >
             UK
           </span>
         )}
         <Tag
-          className="m-0 flex flex-1 items-center justify-center font-plate leading-none font-semibold whitespace-pre"
-          style={{ fontSize: `${fontSize}cqw`, letterSpacing: "0.015em" }}
+          className="m-0 flex flex-1 items-center justify-center font-plate leading-none font-normal whitespace-pre"
+          style={{
+            fontSize: `${reg.fontSize.toFixed(3)}cqw`,
+            letterSpacing: `${reg.letterSpacing.toFixed(3)}cqw`,
+            wordSpacing: `${reg.wordSpacing.toFixed(3)}cqw`,
+            transform: `translateX(${reg.offset.toFixed(3)}cqw)`,
+          }}
         >
-          {reg}
+          {reg.text}
         </Tag>
         {/* Inset border and a soft sheen, like the reflective acrylic face. */}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-[1.3cqw] rounded-[1.6cqw] border-[0.35cqw] border-plate-ink/80"
+          className="pointer-events-none absolute inset-[0.9cqw] rounded-[1.8cqw] border-[0.3cqw] border-plate-ink/80"
         />
         <span
           aria-hidden

@@ -1,0 +1,9 @@
+UKNumberPlate
+Copyright (c) Gareth Attrill 2002 - www.meon.info/fonts
+
+A free lookalike of the Charles Wright typeface used on UK number plates, supplied
+by the site owner. The font file states the copyright above but no licence terms.
+Confirm with the author that commercial use on this website is allowed before launch.
+
+uk-number-plate.ttf is the original file (used for share images). uk-number-plate.woff2
+is the same font repackaged as WOFF2 for the web, with no changes to glyphs or metrics.

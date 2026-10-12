@@ -11,12 +11,20 @@ const inter = localFont({
   display: "swap",
 });
 
+// UKNumberPlate, a Charles Wright lookalike. The overrides make the line box symmetric around
+// the capitals (cap height 1400 of 2048 units, so 324 units above and below), which centres
+// registrations exactly. next/font needs literal values here.
 const plateFace = localFont({
-  src: "../fonts/plate.woff2",
+  src: "../fonts/uk-number-plate.woff2",
   variable: "--font-plate-face",
-  weight: "600",
+  weight: "400",
   display: "swap",
   fallback: ["Arial Narrow", "sans-serif"],
+  declarations: [
+    { prop: "ascent-override", value: "84.1797%" },
+    { prop: "descent-override", value: "15.8203%" },
+    { prop: "line-gap-override", value: "0%" },
+  ],
 });
 
 export const metadata: Metadata = {
