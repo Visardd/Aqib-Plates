@@ -6,6 +6,9 @@ import { plateBand, plateText } from "@/lib/plate-font";
 
 const ease = [0.23, 1, 0.32, 1] as const;
 
+// Shown until there are plates for sale, e.g. on a brand new Sanity dataset.
+const placeholder = "AQ1B PL8";
+
 /** The hero's big plate, cycling through featured registrations one character at a time. */
 export function HeroPlate({ registrations }: { registrations: string[] }) {
   const [index, setIndex] = useState(0);
@@ -17,7 +20,8 @@ export function HeroPlate({ registrations }: { registrations: string[] }) {
     return () => clearInterval(id);
   }, [reduce, registrations.length]);
 
-  const { text: reg, fontSize, letterSpacing, wordSpacing, offset } = plateText(registrations[index], { width: 100, band: true });
+  const registration = registrations.length ? registrations[index % registrations.length] : placeholder;
+  const { text: reg, fontSize, letterSpacing, wordSpacing, offset } = plateText(registration, { width: 100, band: true });
 
   return (
     <div className="@container relative w-full">
