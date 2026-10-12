@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -43,6 +44,13 @@ export function ContactForm() {
       <Button type="submit" size="lg" disabled={pending} className="self-start">
         {pending ? "Sending…" : "Send message"}
       </Button>
+      <p className="text-[13px] text-fg-subtle">
+        We only use your details to reply to you. See our{" "}
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-fg-muted">
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }

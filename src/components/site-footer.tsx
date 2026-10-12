@@ -14,6 +14,7 @@ const columns = [
   {
     title: "Help",
     links: [
+      { href: "/guides", label: "Buyer guides" },
       { href: "/faq", label: "FAQ" },
       { href: "/contact", label: "Contact us" },
     ],
@@ -64,9 +65,17 @@ export function SiteFooter() {
         </address>
       </div>
       <div className="border-t border-line">
-        <div className="container-page flex flex-col gap-2 py-6 text-[13px] text-fg-subtle sm:flex-row sm:justify-between">
+        <div className="container-page flex flex-col gap-2 py-6 text-[13px] text-fg-subtle md:flex-row md:justify-between md:gap-6">
           <p>© {site.legalName}. All rights reserved.</p>
           <p>We sell registration rights only, not physical number plates.</p>
+          <nav aria-label="Legal" className="flex gap-5">
+            <Link href="/terms" className="transition-colors hover:text-fg">
+              Terms of Sale
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-fg">
+              Privacy
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

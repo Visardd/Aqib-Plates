@@ -1,4 +1,4 @@
-import type { BreadcrumbList, Offer, Organization, Product, Store, WebSite, WithContext } from "schema-dts";
+import type { Article, BreadcrumbList, Offer, Organization, Product, Store, WebSite, WithContext } from "schema-dts";
 import { absoluteUrl, site } from "./site";
 import type { Plate } from "./plates";
 
@@ -84,5 +84,29 @@ export function breadcrumbSchema(items: { name: string; path: string }[]): WithC
       name: item.name,
       item: absoluteUrl(item.path),
     })),
+  };
+}
+
+export function articleSchema(article: {
+  path: string;
+  title: string;
+  description: string;
+  updated: string;
+}): WithContext<Article> {
+  const url = absoluteUrl(article.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${url}#article`,
+    headline: article.title,
+    description: article.description,
+    url,
+    mainEntityOfPage: url,
+    image: absoluteUrl("/opengraph-image"),
+    datePublished: article.updated,
+    dateModified: article.updated,
+    inLanguage: "en-GB",
+    author: { "@id": orgId } as Organization,
+    publisher: { "@id": orgId } as Organization,
   };
 }
