@@ -6,7 +6,9 @@ import { PlateCard } from "@/components/plate-card";
 import { Reveal, Stagger, StaggerItem } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { SoldTicker } from "@/components/sold-ticker";
-import { availablePlates, featuredPlates, soldPlates } from "@/lib/plates";
+import { FaqList } from "@/components/faq-list";
+import { faqs as allFaqs } from "@/content/faq";
+import { getFeaturedPlates, getPlatesForSale, getSoldPlates } from "@/lib/data";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -28,22 +30,11 @@ const steps = [
   },
 ];
 
-const faqs = [
-  {
-    q: "Do you supply the physical number plates?",
-    a: "No. We sell the registration itself. Once it's on your vehicle, any registered number plate supplier can make the physical plates.",
-  },
-  {
-    q: "How long does the transfer take?",
-    a: `Usually ${site.certificateLeadTime} for your V750 certificate to arrive, depending on DVLA processing and Royal Mail.`,
-  },
-  {
-    q: "Do I need a car to buy a private plate?",
-    a: "No. The registration is held on your V750 certificate until you're ready to put it on a vehicle.",
-  },
-];
+const faqs = [allFaqs[1], allFaqs[3], allFaqs[4]];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [forSale, featuredPlates, soldPlates] = await Promise.all([getPlatesForSale(), getFeaturedPlates(), getSoldPlates()]);
+
   return (
     <>
       {/* Hero */}
@@ -80,7 +71,7 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/plates" size="lg">
-              Browse {availablePlates.length} plates
+              Browse {forSale.length} plates
             </ButtonLink>
             <ButtonLink href="/plate-request" variant="secondary" size="lg">
               Request a plate
@@ -194,22 +185,7 @@ export default function HomePage() {
             </>
           }
         />
-        <div className="divide-y divide-line border-y border-line">
-          {faqs.map((item) => (
-            <details key={item.q} className="group py-5 [&_summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-medium">
-                {item.q}
-                <span
-                  aria-hidden
-                  className="grid size-6 shrink-0 place-items-center rounded-full border border-line text-fg-muted transition-transform duration-200 ease-out group-open:rotate-45"
-                >
-                  +
-                </span>
-              </summary>
-              <p className="mt-3 pr-10 text-[15px] leading-relaxed text-fg-muted">{item.a}</p>
-            </details>
-          ))}
-        </div>
+        <FaqList items={faqs} />
       </section>
     </>
   );

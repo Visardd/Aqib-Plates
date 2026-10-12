@@ -1,7 +1,7 @@
-// Seed data scraped from the current Wix site (12 Oct 2026).
-// Step 3 moves this into Sanity so the owner can manage plates without code.
+// Plate types and pure helpers. Safe to import from client components.
+// Data loading lives in `data.ts` (Sanity when configured, the seed file otherwise).
 
-export type PlateStatus = "available" | "sold";
+export type PlateStatus = "available" | "reserved" | "sold";
 
 export type Plate = {
   registration: string;
@@ -10,73 +10,12 @@ export type Plate = {
   status: PlateStatus;
   note?: string;
   featured?: boolean;
+  soldAt?: string;
+  updatedAt?: string;
 };
-
-type Seed = Omit<Plate, "slug"> & { slug?: string };
-
-// Registrations keep the stylised spacing the current site uses; slugs match the old
-// Wix product URLs so /product-page/<slug> can 301 to /plates/<slug>.
-const seed: Seed[] = [
-  { registration: "DBI I BEG", slug: "dbi-i-beg", price: 950, status: "available", featured: true },
-  { registration: "OU13TTT", slug: "ou13ttt", price: 1000, status: "available", featured: true },
-  { registration: "OO1 5TFU", slug: "oii-5tfu", price: 1000, status: "available", featured: true },
-  { registration: "RO63RY X", slug: "ro6ery-x", price: 750, status: "available", featured: true },
-  { registration: "KY5 8REV", slug: "ky5-8rev", price: 650, status: "available", featured: true },
-  { registration: "K1 2TFU", slug: "k1-2tfu", price: 650, status: "available", featured: true },
-  { registration: "G7FO U", slug: "g7fo-u", price: 550, status: "available" },
-  { registration: "AD10SXZ", slug: "ad10sxz", price: 500, status: "available" },
-  { registration: "G7FO B", slug: "g7fo-b", price: 500, status: "available" },
-  { registration: "R10T YU", slug: "r10t-yu", price: 450, status: "available" },
-
-  { registration: "DO I 5TOP", slug: "do-i-5top", price: 900, status: "sold" },
-  { registration: "U W12HHH", slug: "u-w12hhh", price: 750, status: "sold" },
-  { registration: "AX11ZZZ", slug: "ax11zzz", price: 700, status: "sold" },
-  { registration: "KY5 4SAP", slug: "ky5-4sap", price: 650, status: "sold" },
-  { registration: "KY5 2DAY", slug: "ky5-2day", price: 550, status: "sold" },
-  { registration: "KY5 1 BEG", slug: "ky5-1-beg", price: 550, status: "sold" },
-  {
-    registration: "FX55 TTT",
-    slug: "fx55ttt",
-    price: 550,
-    status: "sold",
-    note: "Valid on vehicles registered after 1 September 2005.",
-  },
-  { registration: "R111P HO", slug: "r111p-ho", price: 500, status: "sold" },
-  { registration: "R111P XO", slug: "r111p-xo", price: 500, status: "sold" },
-  { registration: "SS14YYY", slug: "ss14yyy", price: 400, status: "sold" },
-  // From the Sold page, which only has images (no prices or dates).
-  { registration: "P222SYO", status: "sold" },
-  { registration: "A23MED", status: "sold" },
-  { registration: "VS 60SSS", status: "sold" },
-  { registration: "CO11D AF", status: "sold" },
-  { registration: "YE 60SSS", status: "sold" },
-  { registration: "FA52T AF", status: "sold" },
-  { registration: "V5 ME X", status: "sold" },
-  { registration: "AD10SZ G", status: "sold" },
-  { registration: "YH 60SSS", status: "sold" },
-  { registration: "HA54N V U", status: "sold" },
-  { registration: "GG04TED", status: "sold" },
-  { registration: "AS14NNZ", status: "sold" },
-  { registration: "R11P U X", status: "sold" },
-  { registration: "K 2TFU", status: "sold" },
-  { registration: "R111PP B", status: "sold" },
-  { registration: "AS14NN G", status: "sold" },
-  { registration: "R111PP G", status: "sold" },
-  { registration: "RO63RY G", status: "sold" },
-];
 
 export function slugify(registration: string) {
   return registration.toLowerCase().trim().replace(/\s+/g, "-");
-}
-
-export const plates: Plate[] = seed.map((p) => ({ ...p, slug: p.slug ?? slugify(p.registration) }));
-
-export const availablePlates = plates.filter((p) => p.status === "available");
-export const soldPlates = plates.filter((p) => p.status === "sold");
-export const featuredPlates = availablePlates.filter((p) => p.featured);
-
-export function getPlate(slug: string) {
-  return plates.find((p) => p.slug === slug);
 }
 
 const gbp = new Intl.NumberFormat("en-GB", {
@@ -87,4 +26,37 @@ const gbp = new Intl.NumberFormat("en-GB", {
 
 export function formatPrice(price: number) {
   return gbp.format(price);
+}
+
+export const isForSale = (p: Plate) => p.status === "available";
+
+// Numbers that stand in for letters on cherished plates, so "STOP" finds "DO I 5TOP".
+const lookalikes: Record<string, string> = {
+  "0": "O",
+  "1": "I",
+  "2": "Z",
+  "3": "E",
+  "4": "A",
+  "5": "S",
+  "6": "G",
+  "7": "T",
+  "8": "B",
+};
+
+const compact = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
+const reading = (s: string) => compact(s).replace(/[0-8]/g, (c) => lookalikes[c]);
+
+export function matchesSearch(plate: Plate, query: string) {
+  const q = compact(query);
+  if (!q) return true;
+  return compact(plate.registration).includes(q) || reading(plate.registration).includes(reading(q));
+}
+
+/** Other plates for sale closest in price, for "You may also like". */
+export function similarPlates(plate: Plate, all: Plate[], count = 3) {
+  const target = plate.price ?? 600;
+  return all
+    .filter((p) => p.slug !== plate.slug && isForSale(p))
+    .sort((a, b) => Math.abs((a.price ?? target) - target) - Math.abs((b.price ?? target) - target))
+    .slice(0, count);
 }

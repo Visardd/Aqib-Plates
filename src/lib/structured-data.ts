@@ -4,6 +4,8 @@ import type { Plate } from "./plates";
 
 const orgId = absoluteUrl("/#organization");
 
+export const plateImageUrl = (slug: string) => absoluteUrl(`/og/plates/${slug}`);
+
 export function organizationSchema(): WithContext<Store> {
   return {
     "@context": "https://schema.org",
@@ -65,7 +67,7 @@ export function plateProductSchema(plate: Plate): WithContext<Product> {
     sku: plate.slug.toUpperCase(),
     category: "Private number plates",
     description: `${plate.registration} cherished registration for sale. Supplied on a DVLA V750 Certificate of Entitlement in the buyer's name.`,
-    image: absoluteUrl(`/plates/${plate.slug}/opengraph-image`),
+    image: plateImageUrl(plate.slug),
     url,
     brand: { "@type": "Brand", name: site.name },
     ...(offer ? { offers: offer } : {}),
