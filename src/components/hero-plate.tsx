@@ -28,7 +28,7 @@ export function HeroPlate({ registrations }: { registrations: string[] }) {
         >
           UK
         </span>
-        <span className="sr-only" aria-live="polite">
+        <span className="sr-only">
           {reg}
         </span>
         <span
