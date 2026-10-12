@@ -10,6 +10,7 @@ import { Plate } from "@/components/plate";
 import { PlateCard } from "@/components/plate-card";
 import { Reveal } from "@/components/reveal";
 import { getPlate, getPlates } from "@/lib/data";
+import { plateSpacing } from "@/lib/plate-font";
 import { formatPrice, similarPlates } from "@/lib/plates";
 import { plateImageUrl, plateProductSchema } from "@/lib/structured-data";
 import { absoluteUrl, site } from "@/lib/site";
@@ -86,7 +87,12 @@ export default async function PlatePage({ params }: PageProps<"/plates/[slug]">)
           <p className="text-[13px] font-medium text-accent">
             {sold ? "Sold" : reserved ? "Reserved" : "Private number plate"}
           </p>
-          <h1 className="mt-3 font-plate text-6xl leading-none tracking-wide whitespace-pre">{plate.registration}</h1>
+          <h1
+            className="mt-3 font-plate text-6xl leading-none whitespace-pre"
+            style={{ letterSpacing: `${plateSpacing.letterSpacing}em`, wordSpacing: `${plateSpacing.wordSpacing}em` }}
+          >
+            {plate.registration}
+          </h1>
           {plate.price !== undefined && !sold && (
             <p className="mt-6 text-3xl font-medium tracking-tight tabular-nums">{formatPrice(plate.price)}</p>
           )}

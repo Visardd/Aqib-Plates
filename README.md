@@ -66,4 +66,6 @@ Built in from the start:
 
 ## Fonts
 
-Inter (SIL OFL) and Barlow Condensed (SIL OFL) are self-hosted in `src/fonts`. Barlow Condensed stands in for the official Charles Wright plate font, which needs a commercial licence.
+Inter (SIL OFL) and UKNumberPlate are self-hosted in `src/fonts`. UKNumberPlate is a free Charles Wright lookalike by Gareth Attrill; its commercial-use terms still need confirming (see `src/fonts/uk-number-plate-LICENSE.txt`).
+
+Registrations are laid out by `src/lib/plate-font.ts` from the font's own metrics: 79 mm characters on a 520 mm plate, 11 mm between characters, 33 mm between groups, with the ink centred exactly.
