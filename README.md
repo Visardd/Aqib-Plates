@@ -38,12 +38,18 @@ Built in from the start:
 - Unique titles and descriptions per page via the Metadata API, canonical URLs, `en-GB` locale
 - Generated Open Graph and Twitter images (a styled plate per page)
 - `robots.txt` (blocks preview deployments), `sitemap.xml` (every page and plate), web manifest, icons
-- JSON-LD structured data: `Store`, `WebSite`, `Product`/`Offer` and `BreadcrumbList` on every plate page, `ItemList` on the plates list, `FAQPage` on the FAQ and `Service` on the plate request page
+- JSON-LD structured data: `Store`, `WebSite`, `Product`/`Offer` and `BreadcrumbList` on every plate page, `ItemList` on the plates list, `FAQPage` on the FAQ, `Article` on each guide and `Service` on the plate request page
 - A page per plate with its own title, description and share image; sold plate pages stay up and point visitors to similar plates
 - Permanent redirects from every old Wix URL (`/product-page/*`, `/private-plates`, `/contact-4`, ...) so existing rankings carry over
 - Registrations are real text, not images, so Google can index every plate
+- Buyer guides at `/guides` (V750, transfers, display rules, plate formats) with `Article` structured data, linking readers on to plates for sale. Content lives in `src/content/guides.ts`
 - Static rendering, self-hosted preloaded fonts, minimal client JavaScript, and reduced-motion support for strong Core Web Vitals
 - Semantic HTML: one `h1` per page, labelled sections, skip link, accessible navigation
+
+## Before launch
+
+- **Terms of Sale and Privacy Policy** (`src/content/legal.ts`) are drafts based on the current site's policies. Aqib should check every line, and ideally have a solicitor review them.
+- **Guides** (`src/content/guides.ts`) were checked against GOV.UK in October 2026. Aqib should check the wording.
 
 ## Fonts
 

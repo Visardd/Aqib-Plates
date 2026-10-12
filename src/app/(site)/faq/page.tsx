@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ButtonLink } from "@/components/button";
 import { FaqList } from "@/components/faq-list";
 import { JsonLd } from "@/components/json-ld";
@@ -47,6 +48,13 @@ export default function FaqPage() {
           <ButtonLink href="/contact" variant="secondary" className="mt-5">
             Contact us
           </ButtonLink>
+          <p className="mt-6 border-t border-line pt-6 text-[15px] leading-relaxed text-fg-muted">
+            New to private plates? Our{" "}
+            <Link href="/guides" className="text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg">
+              buyer guides
+            </Link>{" "}
+            explain the V750 certificate, transfers and the display rules.
+          </p>
         </aside>
       </section>
     </>

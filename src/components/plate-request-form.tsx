@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -197,6 +198,17 @@ export function PlateRequestForm() {
           </Button>
         )}
       </div>
+      <p className="mt-6 text-[13px] text-fg-subtle">
+        We only use your details to find your plate. See our{" "}
+        <Link href="/terms#plate-finding-service" className="underline underline-offset-4 hover:text-fg-muted">
+          Terms of Sale
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-fg-muted">
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }
