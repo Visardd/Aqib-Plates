@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import localFont from "next/font/local";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -62,7 +63,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-GB" className={`${inter.variable} ${plateFace.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-canvas font-sans text-fg">{children}</body>
+      <body className="flex min-h-dvh flex-col bg-canvas font-sans text-fg">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
